@@ -1,0 +1,6 @@
+include: https://gitlab-templates.ddbuild.io/compute-delivery/v2/compute-delivery.yml
+
+build-docker-image-main:
+  variables:
+    IMAGE_NAME: nvidia/gdrcopy
+  extends: .build-docker-image
