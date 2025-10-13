@@ -60,6 +60,19 @@ _build_and_load() {
     modprobe gdrdrv
 }
 
+_create_inode() {
+    major=$(grep -F gdrdrv /proc/devices | cut -b 1-4)
+    echo "INFO: driver major is $major"
+
+    if [ -e "$NVIDIA_DRIVER_ROOT/dev/gdrdrv" ]; then
+        rm "$NVIDIA_DRIVER_ROOT/dev/gdrdrv"
+    fi
+
+    echo "INFO: creating $NVIDIA_DRIVER_ROOT/dev/gdrdrv inode"
+    mknod "$NVIDIA_DRIVER_ROOT/dev/gdrdrv" c $major 0
+    chmod a+w+r "$NVIDIA_DRIVER_ROOT/dev/gdrdrv"
+}
+
 install() {
     # Determine the kernel suffix from $KERNEL_MODULE_TYPE
     _resolve_kernel_suffix || exit 1
@@ -75,6 +88,9 @@ install() {
 
     echo "Building and loading gdrdrv kernel module"
     _build_and_load
+
+    echo "Creating device inode"
+    _create_inode
 
     echo "Done, now waiting for signal"
     sleep infinity &
