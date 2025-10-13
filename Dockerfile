@@ -1,6 +1,6 @@
 ARG BUILDER_IMAGE
 
-FROM registry.ddbuild.io/images/nvidia-cuda-base:12.9.0
+FROM registry.ddbuild.io/images/nvidia-cuda-devel:12.9.0
 
 LABEL maintainers="Compute"
 
@@ -29,8 +29,6 @@ COPY config_arch /work/config_arch
 COPY Makefile /work/Makefile
 COPY README.md /work/README.md
 
-RUN /work/packages/build-deb-packages.sh -t
+RUN /work/packages/build-deb-packages.sh
 
-COPY nvidia-gdrcopy-driver.sh /usr/local/bin/nvidia-gdrcopy-driver
-
-ENTRYPOINT [ "nvidia-gdrcopy-driver", "install" ]
+ENTRYPOINT [ "sleep", "infinity" ]
