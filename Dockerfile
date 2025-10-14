@@ -1,8 +1,6 @@
 ARG BUILDER_IMAGE
 
-FROM registry.ddbuild.io/images/nvidia-cuda-base:12.9.0
-
-LABEL maintainers="Compute"
+FROM registry.ddbuild.io/images/nvidia-cuda-devel:12.9.0 AS build
 
 ENV CUDA=/usr/local/cuda
 
@@ -29,8 +27,24 @@ COPY config_arch /work/config_arch
 COPY Makefile /work/Makefile
 COPY README.md /work/README.md
 
-RUN /work/packages/build-deb-packages.sh -t
+RUN /work/packages/build-deb-packages.sh
 
+FROM registry.ddbuild.io/images/nvidia-cuda-base:12.9.0
+
+LABEL maintainers="Compute"
+
+USER root
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    devscripts \
+    debhelper \
+    dkms \
+    fakeroot \
+    gcc-12 \
+    pkg-config
+
+COPY --from=build /work/build /work/build
 COPY nvidia-gdrcopy-driver.sh /usr/local/bin/nvidia-gdrcopy-driver
 
 ENTRYPOINT [ "nvidia-gdrcopy-driver", "install" ]
