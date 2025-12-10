@@ -67,7 +67,7 @@ _install_prerequisites() {
 }
 
 _build() {
-    make driver
+    make driver KVER=${CKMB_KERNEL_FULL_VERSION}
     cp src/gdrdrv/gdrdrv.ko gdrdrv.ko
 }
 
