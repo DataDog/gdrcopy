@@ -39,6 +39,9 @@ install() {
     echo "Unloading gdrdrv kernel module"
     _unload_driver || exit 1
 
+    echo "Loading gdrdrv kernel module"
+    modprobe -d /opt gdrdrv || exit 1
+
     echo "Creating device inode"
     _create_inode
 
